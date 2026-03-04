@@ -4,9 +4,11 @@ import { useState } from "react";
 import type { AppSession } from "@/lib/session";
 import type { Calendar } from "@/lib/generated/prisma";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { CalendarDays, Plus, UserCheck, Users, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CalendarSidebar from "@/components/calendars/CalendarSidebar";
+import { cn } from "@/lib/utils";
 
 interface MobileSidebarProps {
   session: AppSession;
@@ -22,33 +24,52 @@ export default function MobileSidebar({
   onToggle,
 }: MobileSidebarProps) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navItemClass = (active: boolean) =>
+    cn(
+      "flex flex-col items-center gap-0.5 min-w-0 px-3 py-1 rounded-xl transition-all duration-150 active:scale-90 active:opacity-70",
+      active
+        ? "text-primary"
+        : "text-muted-foreground"
+    );
 
   return (
     <>
       {/* Bottom navigation bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background flex items-center justify-around h-14 z-40 px-2">
-        <Link href="/calendar" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1">
-          <CalendarDays className="w-5 h-5" />
-          <span className="truncate whitespace-nowrap">Calendar</span>
+        <Link href="/calendar" className={navItemClass(pathname === "/calendar")}>
+          <div className={cn("p-1 rounded-lg transition-colors duration-150", pathname === "/calendar" && "bg-primary/10")}>
+            <CalendarDays className="w-5 h-5" />
+          </div>
+          <span className={cn("text-[10px] font-medium truncate whitespace-nowrap", pathname === "/calendar" && "font-semibold")}>Calendar</span>
         </Link>
-        <Link href="/events/new" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1">
-          <Plus className="w-5 h-5" />
-          <span className="truncate whitespace-nowrap">New</span>
+        <Link href="/events/new" className={navItemClass(pathname === "/events/new")}>
+          <div className={cn("p-1 rounded-lg transition-colors duration-150", pathname === "/events/new" && "bg-primary/10")}>
+            <Plus className="w-5 h-5" />
+          </div>
+          <span className={cn("text-[10px] font-medium truncate whitespace-nowrap", pathname === "/events/new" && "font-semibold")}>New</span>
         </Link>
-        <Link href="/calendars/new" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1">
-          <Users className="w-5 h-5" />
-          <span className="truncate whitespace-nowrap">Groups</span>
+        <Link href="/calendars/new" className={navItemClass(pathname.startsWith("/calendars"))}>
+          <div className={cn("p-1 rounded-lg transition-colors duration-150", pathname.startsWith("/calendars") && "bg-primary/10")}>
+            <Users className="w-5 h-5" />
+          </div>
+          <span className={cn("text-[10px] font-medium truncate whitespace-nowrap", pathname.startsWith("/calendars") && "font-semibold")}>Groups</span>
         </Link>
-        <Link href="/friends" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1">
-          <UserCheck className="w-5 h-5" />
-          <span className="truncate whitespace-nowrap">Friends</span>
+        <Link href="/friends" className={navItemClass(pathname.startsWith("/friends"))}>
+          <div className={cn("p-1 rounded-lg transition-colors duration-150", pathname.startsWith("/friends") && "bg-primary/10")}>
+            <UserCheck className="w-5 h-5" />
+          </div>
+          <span className={cn("text-[10px] font-medium truncate whitespace-nowrap", pathname.startsWith("/friends") && "font-semibold")}>Friends</span>
         </Link>
         <button
           onClick={() => setOpen(true)}
-          className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1"
+          className={navItemClass(open)}
         >
-          <Menu className="w-5 h-5" />
-          <span className="truncate whitespace-nowrap">More</span>
+          <div className={cn("p-1 rounded-lg transition-colors duration-150", open && "bg-primary/10")}>
+            <Menu className="w-5 h-5" />
+          </div>
+          <span className={cn("text-[10px] font-medium truncate whitespace-nowrap", open && "font-semibold")}>More</span>
         </button>
       </nav>
 
