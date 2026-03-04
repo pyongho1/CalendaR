@@ -34,7 +34,12 @@ export default function LoginPage() {
       router.push("/calendar");
     } catch (err) {
       console.error(err);
-      setError("Sign in failed. Please try again.");
+      const firebaseError = err as { code?: string; message?: string };
+      if (firebaseError.code === "auth/unauthorized-domain") {
+        setError("This domain is not authorized in Firebase. Add it to your Firebase project's authorized domains.");
+      } else {
+        setError(firebaseError.message ?? "Sign in failed. Please try again.");
+      }
       setLoading(false);
     }
   }
