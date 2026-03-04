@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────────────────────────────
+// User model (id = Firebase UID)
+// ───────────────────────────────────────────────
+
+model User {
+  id                    String           @id
+  name                  String?
+  email                 String           @unique
+  image                 String?
+  ownedCalendars        Calendar[]       @relation("CalendarOwner")
+  calendarMemberships   CalendarMember[]
+  createdEvents         Event[]          @relation("EventCreator")
+  eventAttendances      EventAttendee[]
+  sentFriendInvites     FriendInvite[]   @relation("SentFriendInvites")
+  receivedFriendInvites FriendInvite[]   @relation("ReceivedFriendInvites")
+  notifications         Notification[]
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Calendar domain models
+// ───────────────────────────────────────────────
+
+model Calendar {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+  isPersonal  Boolean          @default(false)
+  color       String           @default("#3B82F6")
+  ownerId     String
+  owner       User             @relation("CalendarOwner", fields: [ownerId], references: [id])
+  members     CalendarMember[]
+  events      Event[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model CalendarMember {
+  id         String   @id @default(cuid())
+  calendarId String
+  calendar   Calendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       String   @default("member")
+  joinedAt   DateTime @default(now())
+
+  @@unique([calendarId, userId])
+}
+
+model Event {
+  id            String          @id @default(cuid())
+  title         String
+  description   String?
+  startTime     DateTime
+  endTime       DateTime
+  timezone      String          @default("UTC")
+  allDay        Boolean         @default(false)
+  calendarId    String
+  calendar      Calendar        @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  creatorId     String
+  creator       User            @relation("EventCreator", fields: [creatorId], references: [id])
+  rrule         String?
+  recurrenceEnd DateTime?
+  attendees     EventAttendee[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model EventAttendee {
+  id      String @id @default(cuid())
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  status  String @default("pending")
+
+  @@unique([eventId, userId])
+}
+
+model InviteToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  type      String
+  targetId  String
+  inviteeId String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  read      Boolean  @default(false)
+  eventId   String?
+  createdAt DateTime @default(now())
+}
+
+model FriendInvite {
+  id         String    @id @default(cuid())
+  fromId     String
+  from       User      @relation("SentFriendInvites", fields: [fromId], references: [id], onDelete: Cascade)
+  toEmail    String
+  toId       String?
+  to         User?     @relation("ReceivedFriendInvites", fields: [toId], references: [id], onDelete: SetNull)
+  acceptedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@unique([fromId, toEmail])
+}

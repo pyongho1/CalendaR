@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(npm:*)",
+      "Bash(node:*)",
+      "Bash(~/.nvm/versions/node/v20.20.0/bin/node:*)"
+    ]
+  }
+}
