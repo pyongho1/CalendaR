@@ -20,7 +20,7 @@ export default async function CalendarPage({
     where: { userId },
     select: { calendarId: true },
   });
-  const calendarIds = memberships.map((m) => m.calendarId);
+  const calendarIds = memberships.map((m: { calendarId: string }) => m.calendarId);
 
   // All events in those calendars + accepted attendee events outside those calendars
   const [events, attendeeRows] = await Promise.all([
