@@ -23,6 +23,7 @@ model User {
   sentFriendInvites     FriendInvite[]   @relation("SentFriendInvites")
   receivedFriendInvites FriendInvite[]   @relation("ReceivedFriendInvites")
   notifications         Notification[]
+  fcmToken              String?
   createdAt             DateTime         @default(now())
   updatedAt             DateTime         @updatedAt
 }

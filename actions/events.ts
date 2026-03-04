@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { sendEventInviteEmail } from "@/lib/emails/sendEventInvite";
+import { sendPushToUsers } from "@/lib/fcm";
 
 // ──────────────────────────────────────────────────────
 // Create Event
@@ -34,6 +35,15 @@ export async function createEvent(formData: FormData) {
   // Verify user is a member of the calendar
   const membership = await prisma.calendarMember.findUnique({
     where: { calendarId_userId: { calendarId, userId: session.userId } },
+    include: {
+      calendar: {
+        select: {
+          isPersonal: true,
+          name: true,
+          members: { select: { userId: true } },
+        },
+      },
+    },
   });
   if (!membership) return { error: "Not a member of this calendar" };
 
@@ -51,6 +61,20 @@ export async function createEvent(formData: FormData) {
       recurrenceEnd,
     },
   });
+
+  // Send push notifications to other group calendar members
+  if (!membership.calendar.isPersonal) {
+    const otherMemberIds = membership.calendar.members
+      .map((m) => m.userId)
+      .filter((id) => id !== session.userId);
+    if (otherMemberIds.length > 0) {
+      await sendPushToUsers(
+        otherMemberIds,
+        `New event: ${title}`,
+        `Added to ${membership.calendar.name}`
+      );
+    }
+  }
 
   // Handle attendee invites
   if (attendeeEmails.length > 0) {
@@ -101,7 +125,9 @@ export async function updateEvent(eventId: string, formData: FormData) {
   const event = await prisma.event.findUnique({
     where: { id: eventId },
     include: {
-      calendar: true,
+      calendar: {
+        include: { members: { select: { userId: true } } },
+      },
       attendees: { include: { user: true } },
     },
   });
@@ -141,6 +167,20 @@ export async function updateEvent(eventId: string, formData: FormData) {
       recurrenceEnd,
     },
   });
+
+  // Send push notifications to other group calendar members
+  if (!event.calendar.isPersonal) {
+    const otherMemberIds = event.calendar.members
+      .map((m) => m.userId)
+      .filter((id) => id !== session.userId);
+    if (otherMemberIds.length > 0) {
+      await sendPushToUsers(
+        otherMemberIds,
+        `Updated event: ${title}`,
+        `Changed in ${event.calendar.name}`
+      );
+    }
+  }
 
   // Sync attendees
   const existingEmails = event.attendees.map((a: { user: { email: string } }) => a.user.email);

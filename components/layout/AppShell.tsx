@@ -7,6 +7,7 @@ import type { PendingInvite, ResponseNotification } from "@/components/layout/No
 import CalendarSidebar from "@/components/calendars/CalendarSidebar";
 import Header from "@/components/layout/Header";
 import MobileSidebar from "@/components/layout/MobileSidebar";
+import PushNotificationSetup from "@/components/layout/PushNotificationSetup";
 
 interface AppShellProps {
   session: AppSession;
@@ -42,6 +43,7 @@ export default function AppShell({ session, calendars, pendingInvites, responseN
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
+      <PushNotificationSetup />
       {/* Desktop sidebar */}
       <aside className="hidden md:flex md:flex-col md:w-64 border-r shrink-0">
         <CalendarSidebar
