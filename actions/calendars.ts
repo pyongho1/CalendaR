@@ -125,6 +125,7 @@ export async function addMember(calendarId: string, email: string) {
     token: token.token,
   });
 
+  revalidatePath("/calendar");
   revalidatePath(`/calendars/${calendarId}`);
   return { success: true };
 }

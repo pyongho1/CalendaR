@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { AppSession } from "@/lib/session";
 import type { Calendar } from "@/lib/generated/prisma";
 import type { PendingInvite, ResponseNotification } from "@/components/layout/NotificationBell";
@@ -20,6 +20,16 @@ export default function AppShell({ session, calendars, pendingInvites, responseN
   const [visibleCalendars, setVisibleCalendars] = useState<Set<string>>(
     new Set(calendars.map((c) => c.id))
   );
+
+  useEffect(() => {
+    setVisibleCalendars((prev) => {
+      const newIds = calendars.map((c) => c.id).filter((id) => !prev.has(id));
+      if (newIds.length === 0) return prev;
+      const next = new Set(prev);
+      newIds.forEach((id) => next.add(id));
+      return next;
+    });
+  }, [calendars]);
 
   function toggleCalendar(id: string) {
     setVisibleCalendars((prev) => {
