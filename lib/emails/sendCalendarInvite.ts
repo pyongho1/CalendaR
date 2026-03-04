@@ -15,7 +15,11 @@ export async function sendCalendarInviteEmail({
   ownerName,
   token,
 }: SendCalendarInviteParams) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ??
+    (process.env.NODE_ENV === "production"
+      ? "https://calendah.netlify.app"
+      : "http://localhost:3000");
   const acceptUrl = `${baseUrl}/api/invites/${token}?action=accept`;
 
   await resend.emails.send({
