@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import NotificationBell from "@/components/layout/NotificationBell";
 import type { PendingInvite, ResponseNotification } from "@/components/layout/NotificationBell";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { InstallPWA } from "@/components/layout/InstallPWA";
 
 export default function Header({
   session,
@@ -61,6 +62,7 @@ export default function Header({
           </Link>
         </Button>
 
+        <InstallPWA />
         <ThemeToggle />
         <NotificationBell pendingInvites={pendingInvites} responseNotifications={responseNotifications} />
 
