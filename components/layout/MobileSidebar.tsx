@@ -27,28 +27,28 @@ export default function MobileSidebar({
     <>
       {/* Bottom navigation bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background flex items-center justify-around h-14 z-40 px-2">
-        <Link href="/calendar" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground">
+        <Link href="/calendar" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1">
           <CalendarDays className="w-5 h-5" />
-          <span>Calendar</span>
+          <span className="truncate whitespace-nowrap">Calendar</span>
         </Link>
-        <Link href="/events/new" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground">
+        <Link href="/events/new" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1">
           <Plus className="w-5 h-5" />
-          <span>New</span>
+          <span className="truncate whitespace-nowrap">New</span>
         </Link>
-        <Link href="/calendars/new" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground">
+        <Link href="/calendars/new" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1">
           <Users className="w-5 h-5" />
-          <span>Groups</span>
+          <span className="truncate whitespace-nowrap">Groups</span>
         </Link>
-        <Link href="/friends" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground">
+        <Link href="/friends" className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1">
           <UserCheck className="w-5 h-5" />
-          <span>Friends</span>
+          <span className="truncate whitespace-nowrap">Friends</span>
         </Link>
         <button
           onClick={() => setOpen(true)}
-          className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground"
+          className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground min-w-0 px-1"
         >
           <Menu className="w-5 h-5" />
-          <span>More</span>
+          <span className="truncate whitespace-nowrap">More</span>
         </button>
       </nav>
 
@@ -59,7 +59,7 @@ export default function MobileSidebar({
             className="absolute inset-0 bg-black/40"
             onClick={() => setOpen(false)}
           />
-          <div className="relative ml-auto w-72 bg-background h-full flex flex-col shadow-xl">
+          <div className="relative ml-auto w-[85vw] max-w-xs bg-background h-full flex flex-col shadow-xl">
             <div className="flex items-center justify-between p-4 border-b">
               <span className="font-semibold">Calendars</span>
               <Button
