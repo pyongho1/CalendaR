@@ -143,7 +143,7 @@ export async function updateEvent(eventId: string, formData: FormData) {
   });
 
   // Sync attendees
-  const existingEmails = event.attendees.map((a) => a.user.email);
+  const existingEmails = event.attendees.map((a: { user: { email: string } }) => a.user.email);
   const submittedEmails = attendeeEmails.map((e) => e.toLowerCase());
 
   // Add new attendees
@@ -180,7 +180,7 @@ export async function updateEvent(eventId: string, formData: FormData) {
 
   // Remove attendees no longer in the list
   const removedAttendees = event.attendees.filter(
-    (a) => !submittedEmails.includes(a.user.email)
+    (a: { user: { email: string }; userId: string }) => !submittedEmails.includes(a.user.email)
   );
   for (const a of removedAttendees) {
     await prisma.eventAttendee.delete({
