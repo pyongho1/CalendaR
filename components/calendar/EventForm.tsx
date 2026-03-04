@@ -137,7 +137,7 @@ export default function EventForm({
     setSearching(true);
     searchTimeout.current = setTimeout(async () => {
       const results = await searchUsers(attendeeSearch);
-      setSearchResults(results.filter((r) => !attendees.find((a) => a.id === r.id)));
+      setSearchResults(results.filter((r: Attendee) => !attendees.find((a) => a.id === r.id)));
       setSearching(false);
     }, 300);
   }, [attendeeSearch]);

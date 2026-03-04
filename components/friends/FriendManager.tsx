@@ -18,6 +18,7 @@ interface FriendUser {
 
 interface FriendInvite {
   id: string;
+  fromId: string;
   toEmail: string;
   acceptedAt: Date | null;
   from: FriendUser;

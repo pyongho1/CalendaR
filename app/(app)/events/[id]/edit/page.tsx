@@ -67,7 +67,7 @@ export default async function EditEventPage({
           rrule: event.rrule,
           recurrenceEnd: event.recurrenceEnd?.toISOString() ?? null,
         }}
-        initialAttendees={event.attendees.map((a) => ({
+        initialAttendees={event.attendees.map((a: { user: { id: string; name: string | null; email: string; image: string | null } }) => ({
           id: a.user.id,
           name: a.user.name,
           email: a.user.email,

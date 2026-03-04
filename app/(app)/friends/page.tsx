@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import type { FriendInvite } from "@/lib/generated/prisma";
 import FriendManager from "@/components/friends/FriendManager";
 
 export default async function FriendsPage() {
@@ -19,11 +20,11 @@ export default async function FriendsPage() {
   });
 
   // Accepted: both sides connected
-  const friends = allInvites.filter((i) => i.acceptedAt !== null);
+  const friends = allInvites.filter((i: FriendInvite) => i.acceptedAt !== null);
 
   // Pending: sent by me, not yet accepted (recipient hasn't signed in)
   const pending = allInvites.filter(
-    (i) => i.fromId === session.userId && i.acceptedAt === null
+    (i: FriendInvite) => i.fromId === session.userId && i.acceptedAt === null
   );
 
   return (

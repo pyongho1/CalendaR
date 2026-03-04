@@ -37,7 +37,10 @@ export default async function AppLayout({
     }),
   ]);
 
-  const serializedInvites = pendingInvites.map((a) => ({
+  const serializedInvites = pendingInvites.map((a: {
+    id: string;
+    event: { id: string; title: string; startTime: Date; calendar: { color: string } };
+  }) => ({
     id: a.id,
     eventId: a.event.id,
     eventTitle: a.event.title,
@@ -45,7 +48,12 @@ export default async function AppLayout({
     calendarColor: a.event.calendar.color,
   }));
 
-  const serializedNotifications = responseNotifications.map((n) => ({
+  const serializedNotifications = responseNotifications.map((n: {
+    id: string;
+    title: string;
+    eventId: string | null;
+    createdAt: Date;
+  }) => ({
     id: n.id,
     title: n.title,
     eventId: n.eventId,

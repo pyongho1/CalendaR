@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import type { Calendar } from "@/lib/generated/prisma";
 import { redirect } from "next/navigation";
 import EventForm from "@/components/calendar/EventForm";
 import { ChevronLeft } from "lucide-react";
@@ -26,7 +27,7 @@ export default async function NewEventPage({
     orderBy: [{ isPersonal: "desc" }, { createdAt: "asc" }],
   });
 
-  const personalCalendar = calendars.find((c) => c.isPersonal) ?? calendars[0];
+  const personalCalendar = calendars.find((c: Calendar) => c.isPersonal) ?? calendars[0];
 
   return (
     <div className="max-w-xl mx-auto px-4 py-6">

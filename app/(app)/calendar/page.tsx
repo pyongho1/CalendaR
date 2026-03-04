@@ -71,7 +71,7 @@ export default async function CalendarPage({
 
   const serialized = [
     ...events.map(serializeEvent),
-    ...attendeeRows.map((row) => serializeEvent(row.event)),
+    ...attendeeRows.map((row: { event: SerializableEvent }) => serializeEvent(row.event)),
   ];
 
   return (
