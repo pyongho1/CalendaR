@@ -17,6 +17,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import NotificationBell from "@/components/layout/NotificationBell";
 import type { PendingInvite, ResponseNotification } from "@/components/layout/NotificationBell";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function Header({
   session,
@@ -60,6 +61,7 @@ export default function Header({
           </Link>
         </Button>
 
+        <ThemeToggle />
         <NotificationBell pendingInvites={pendingInvites} responseNotifications={responseNotifications} />
 
         <DropdownMenu>
