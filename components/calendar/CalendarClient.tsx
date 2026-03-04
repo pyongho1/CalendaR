@@ -62,6 +62,27 @@ export default function CalendarClient({ events, userId }: CalendarClientProps) 
     );
   }, [mobileView, isMobile, mounted]);
 
+  useEffect(() => {
+    if (!mounted) return;
+
+    const refresh = () => router.refresh();
+
+    const handleFocus = () => refresh();
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
+    const interval = setInterval(refresh, 30_000);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      clearInterval(interval);
+    };
+  }, [mounted, router]);
+
   const filteredEvents = events
     .filter((e) => visibleCalendars.has(e.calendarId))
     .map((e) => {
@@ -79,8 +100,8 @@ export default function CalendarClient({ events, userId }: CalendarClientProps) 
       return {
         id: e.id,
         title: e.title,
-        start: e.start,
-        end: e.end,
+        start: e.allDay ? e.start.slice(0, 10) : e.start,
+        end: e.allDay ? addOneDay(e.end.slice(0, 10)) : e.end,
         allDay: e.allDay,
         color: e.color,
         extendedProps: { calendarId: e.calendarId, description: e.description, timezone: e.timezone, originalEvent: e },
@@ -171,6 +192,11 @@ export default function CalendarClient({ events, userId }: CalendarClientProps) 
       )}
     </>
   );
+}
+
+function addOneDay(dateStr: string): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
 }
 
 function computeDuration(start: string, end: string): string {
